@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Flood early warning simulation</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<style>
+  body {
+    font-family: sans-serif;
+    max-width: 1100px;
+    margin: 30px auto;
+    background: #eef1f3;
+    color: #2b2b2b;
+    padding: 0 16px 40px;
+  }
+  h2 { font-weight: 600; }
+  #controls {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    background: #ffffff;
+    padding: 14px 18px;
+    border-radius: 10px;
+    border: 1px solid #dfe3e6;
+  }
+  label { font-size: 14px; }
+  input[type="number"] { width: 60px; }
+  button {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid #c7ccd1;
+    background: #f6f7f8;
+    cursor: pointer;
+  }
+  button:hover { background: #ececec; }
+
+  #layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+  #chartCard {
+    background: #ffffff;
+    border: 1px solid #dfe3e6;
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .sideCard {
+    background: #ffffff;
+    border: 1px solid #dfe3e6;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 16px;
+  }
+  #stageLabel { font-size: 13px; color: #666; margin-bottom: 4px; }
+  #stageText { font-size: 22px; font-weight: 600; margin: 0; }
+  #readingText { font-size: 13px; color: #555; margin-top: 6px; }
+  #log { font-size: 13px; max-height: 320px; overflow-y: auto; }
+  #log div { padding: 6px 0; border-bottom: 1px solid #eee; }
+  #log div:last-child { border-bottom: none; }
+</style>
+</head>
+<body>
+
+<h2>Flood early warning simulation — Content Channel 780060195</h2>
+
+<div id="controls">
+  <label>Load forecast CSV:
+    <input type="file" id="fileInput" accept=".csv">
+  </label>
+  <label>Watch level: <input type="number" id="watchLevel" value="3" step="0.1"></label>
+  <label>Warning level: <input type="number" id="warningLevel" value="5" step="0.1"></label>
+  <label>Emergency level: <input type="number" id="emergencyLevel" value="10" step="0.1"></label>
+  <label>Alert if this % of members exceed: <input type="number" id="pctThreshold" value="30" step="5"></label>
+  <button id="playBtn" onclick="togglePlay()" disabled>Play</button>
+  <button onclick="resetSim()" disabled id="resetBtn">Reset</button>
+</div>
+
+<div id="layout">
+  <div id="chartCard">
+    <svg id="chart" width="100%" viewBox="0 0 700 380"></svg>
+  </div>
+
+  <div id="sidebar">
+    <div class="sideCard">
+      <div id="stageLabel">Current stage</div>
+      <p id="stageText">Load a CSV to begin</p>
+      <p id="readingText"></p>
+    </div>
+    <div class="sideCard">
+      <div id="logLabel">Alert log</div>
+      <div id="log"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const svgNS = "http://www.w3.org/2000/svg";
+const svg = document.getElementById('chart');
+
+// layout inside the SVG's own coordinate space (700 wide, 380 tall — see viewBox above)
+const pad = { left: 55, right: 100, top: 20, bottom: 34 };
+const plotW = 700 - pad.left - pad.right;
+const plotH = 380 - pad.top - pad.bottom;
+
+// ---------- data holders ----------
+let dates = [];
+let members = [];
+let median = [];
+let numMembers = 0;
+let numTimesteps = 0;
+let fixedYMax = 10; // computed once when the file loads, so bands never rescale mid-run
+
+document.getElementById('fileInput').addEventListener('change', function (e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  // reset the panel immediately so leftover text from a previous file doesn't linger
+  document.getElementById('stageText').textContent = 'Reading file...';
+  document.getElementById('stageText').style.color = '#444';
+  document.getElementById('readingText').textContent = '';
+
+  Papa.parse(file, {
+    header: true,
+    dynamicTyping: true,
+    // strips a leading BOM character and any stray whitespace from column
+    // names — some CSV exports (especially from Excel) add these invisibly,
+    // which otherwise makes "Date" fail to match and silently breaks everything downstream
+    transformHeader: h => h.replace(/^\uFEFF/, '').trim(),
+    complete: function (results) {
+      try {
+        const allCols = Object.keys(results.data[0] || {});
+        if (allCols.length === 0) throw new Error('No columns found in this file.');
+
+        // find columns by name instead of assuming exact position or exact casing
+        const dateCol = allCols.find(c => c.toLowerCase() === 'date') || allCols[0];
+        const memberCols = allCols.filter(c => c.toLowerCase().startsWith('member'));
+        const medianCol = allCols.find(c => c.toLowerCase() === 'median');
+
+        if (memberCols.length === 0) throw new Error('No columns starting with "member" were found.');
+
+        const rows = results.data.filter(r => r[dateCol] !== undefined && r[dateCol] !== null && r[dateCol] !== '');
+        if (rows.length === 0) throw new Error('No rows with a valid date were found — check the date column name.');
+
+        dates = rows.map(r => String(r[dateCol]));
+        numTimesteps = dates.length;
+        numMembers = memberCols.length;
+        members = memberCols.map(col => rows.map(r => r[col]));
+
+        median = rows.map(r => {
+          if (medianCol && r[medianCol] !== undefined && r[medianCol] !== null) return r[medianCol];
+          const vals = memberCols.map(c => r[c]).sort((a, b) => a - b);
+          return vals[Math.floor(vals.length / 2)];
+        });
+
+        recomputeYMax();
+        document.getElementById('playBtn').disabled = false;
+        document.getElementById('resetBtn').disabled = false;
+        resetSim();
+      } catch (err) {
+        // show the error ON THE PAGE instead of failing silently in the console —
+        // this is the part that was missing before, which is why the panel
+        // just looked "stuck" with no clue as to why
+        document.getElementById('stageText').textContent = 'Could not read this file';
+        document.getElementById('stageText').style.color = '#993C1D';
+        document.getElementById('readingText').textContent = err.message;
+      }
+    },
+    error: function (err) {
+      document.getElementById('stageText').textContent = 'Could not read this file';
+      document.getElementById('stageText').style.color = '#993C1D';
+      document.getElementById('readingText').textContent = err.message;
+    }
+  });
+});
+
+// Fix the y-axis scale ONCE per run instead of growing every frame.
+// This is what was causing the bands and labels to squash toward the
+// bottom as extreme outlier members (like huge single-member spikes)
+// pushed yMax higher and higher over the course of playback.
+// We base the scale on the median line (the reading people actually
+// read) plus the emergency threshold, not on every wild outlier member.
+function recomputeYMax() {
+  const th = getThresholds();
+  let maxMedian = Math.max(...median);
+  fixedYMax = Math.max(th.emergency * 1.3, maxMedian * 1.3);
+}
+
+// ---------- simulation state ----------
+let i = 0, playing = false, timer = null, firedStage = 'Normal';
+
+function xPixel(index) {
+  return pad.left + (plotW * index / (numTimesteps - 1));
+}
+function yPixel(value) {
+  const clamped = Math.min(Math.max(value, 0), fixedYMax); // values above scale just flatten at the top
+  return pad.top + plotH - (plotH * clamped / fixedYMax);
+}
+function getThresholds() {
+  return {
+    watch: parseFloat(document.getElementById('watchLevel').value),
+    warning: parseFloat(document.getElementById('warningLevel').value),
+    emergency: parseFloat(document.getElementById('emergencyLevel').value)
+  };
+}
+function stageFor(pct, pctNeeded) {
+  if (pct.emergency >= pctNeeded) return 'Emergency';
+  if (pct.warning >= pctNeeded) return 'Warning';
+  if (pct.watch >= pctNeeded) return 'Watch';
+  return 'Normal';
+}
+function stageColor(s) {
+  return { Normal: '#3B6D11', Watch: '#a67c00', Warning: '#854F0B', Emergency: '#993C1D' }[s] || '#444';
+}
+
+function el(tag, attrs) {
+  const e = document.createElementNS(svgNS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  return e;
+}
+
+function draw() {
+  svg.innerHTML = '';
+  if (numTimesteps === 0) return;
+
+  const th = getThresholds();
+
+  // ---- background bands, sized against the FIXED scale so they never move ----
+  const bands = [
+    { lo: 0, hi: th.watch, color: '#e8f5e9', label: 'Normal' },
+    { lo: th.watch, hi: th.warning, color: '#fff8e1', label: 'Watch' },
+    { lo: th.warning, hi: th.emergency, color: '#ffe0b2', label: 'Warning' },
+    { lo: th.emergency, hi: fixedYMax, color: '#ffcdd2', label: 'Emergency' }
+  ];
+  bands.forEach(b => {
+    const yTop = yPixel(b.hi);
+    const yBot = yPixel(b.lo);
+    svg.appendChild(el('rect', { x: pad.left, y: yTop, width: plotW, height: Math.max(yBot - yTop, 0), fill: b.color }));
+    const labelY = (yTop + yBot) / 2;
+    const label = el('text', { x: pad.left + plotW + 10, y: labelY + 4, 'font-size': 13, fill: '#555' });
+    label.textContent = b.label;
+    svg.appendChild(label);
+  });
+
+  // ---- axes ----
+  svg.appendChild(el('line', { x1: pad.left, y1: pad.top, x2: pad.left, y2: pad.top + plotH, stroke: '#888', 'stroke-width': 1 }));
+  svg.appendChild(el('line', { x1: pad.left, y1: pad.top + plotH, x2: pad.left + plotW, y2: pad.top + plotH, stroke: '#888', 'stroke-width': 1 }));
+
+  // ---- faint ensemble member lines (context for spread; flatten at the top if they exceed the fixed scale) ----
+  members.forEach(series => {
+    let d = '';
+    for (let k = 0; k <= i; k++) {
+      const x = xPixel(k), y = yPixel(series[k]);
+      d += (k === 0 ? 'M' : 'L') + x + ' ' + y + ' ';
+    }
+    svg.appendChild(el('path', { d, fill: 'none', stroke: 'rgba(30,100,200,0.15)', 'stroke-width': 1 }));
+  });
+
+  // ---- bold median line ----
+  let d = '';
+  for (let k = 0; k <= i; k++) {
+    const x = xPixel(k), y = yPixel(median[k]);
+    d += (k === 0 ? 'M' : 'L') + x + ' ' + y + ' ';
+  }
+  svg.appendChild(el('path', { d, fill: 'none', stroke: '#185FA5', 'stroke-width': 2.5 }));
+
+  // ---- current marker + live reading label ----
+  const mx = xPixel(i), my = yPixel(median[i]);
+  svg.appendChild(el('circle', { cx: mx, cy: my, r: 4, fill: '#185FA5' }));
+  const reading = el('text', { x: Math.min(mx + 8, pad.left + plotW - 55), y: Math.max(my - 8, pad.top + 12), 'font-size': 13, 'font-weight': 'bold', fill: '#185FA5' });
+  reading.textContent = median[i].toFixed(2);
+  svg.appendChild(reading);
+
+  // ---- y-axis labels ----
+  const yTop = el('text', { x: 8, y: pad.top + 5, 'font-size': 12, fill: '#555' });
+  yTop.textContent = fixedYMax.toFixed(1);
+  svg.appendChild(yTop);
+  const yBot = el('text', { x: 8, y: pad.top + plotH, 'font-size': 12, fill: '#555' });
+  yBot.textContent = '0';
+  svg.appendChild(yBot);
+
+  // ---- x-axis labels ----
+  const xStart = el('text', { x: pad.left, y: 380 - 10, 'font-size': 12, fill: '#555' });
+  xStart.textContent = dates[0].slice(0, 10);
+  svg.appendChild(xStart);
+  const xCur = el('text', { x: Math.max(mx - 40, pad.left), y: 380 - 10, 'font-size': 12, fill: '#555' });
+  xCur.textContent = dates[i].slice(0, 10) + ' ' + dates[i].slice(11, 16);
+  svg.appendChild(xCur);
+}
+
+function checkStage() {
+  const th = getThresholds();
+  const pctNeeded = parseFloat(document.getElementById('pctThreshold').value);
+
+  let countWatch = 0, countWarning = 0, countEmergency = 0;
+  for (let m = 0; m < numMembers; m++) {
+    const v = members[m][i];
+    if (v >= th.watch) countWatch++;
+    if (v >= th.warning) countWarning++;
+    if (v >= th.emergency) countEmergency++;
+  }
+  const pct = {
+    watch: 100 * countWatch / numMembers,
+    warning: 100 * countWarning / numMembers,
+    emergency: 100 * countEmergency / numMembers
+  };
+  const stage = stageFor(pct, pctNeeded);
+
+  document.getElementById('stageText').textContent = stage;
+  document.getElementById('stageText').style.color = stageColor(stage);
+  document.getElementById('readingText').textContent =
+    dates[i] + ' — median flow: ' + median[i].toFixed(2) +
+    ' (' + pct.watch.toFixed(0) + '% above watch, ' +
+    pct.warning.toFixed(0) + '% above warning, ' +
+    pct.emergency.toFixed(0) + '% above emergency)';
+
+  if (stage !== firedStage) {
+    const rank = { Normal: 0, Watch: 1, Warning: 2, Emergency: 3 };
+    const direction = rank[stage] > rank[firedStage] ? 'rising into' : 'receding to';
+    logLine(dates[i] + ' — flow at ' + median[i].toFixed(2) + ', ' + direction + ' ' + stage + ' stage', stageColor(stage));
+    firedStage = stage;
+  }
+}
+
+function logLine(msg, color) {
+  const row = document.createElement('div');
+  row.style.color = color;
+  row.textContent = msg;
+  document.getElementById('log').prepend(row);
+}
+
+function step() {
+  if (i >= numTimesteps - 1) {
+    playing = false;
+    document.getElementById('playBtn').textContent = 'Play';
+    clearInterval(timer);
+    return;
+  }
+  i++;
+  draw();
+  checkStage();
+}
+
+function togglePlay() {
+  playing = !playing;
+  document.getElementById('playBtn').textContent = playing ? 'Pause' : 'Play';
+  if (playing) timer = setInterval(step, 200);
+  else clearInterval(timer);
+}
+
+function resetSim() {
+  clearInterval(timer);
+  playing = false;
+  document.getElementById('playBtn').textContent = 'Play';
+  i = 0;
+  firedStage = 'Normal';
+  document.getElementById('log').innerHTML = '';
+  draw();
+  checkStage();
+}
+</script>
+
+</body>
+</html>
