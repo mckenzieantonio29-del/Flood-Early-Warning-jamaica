@@ -1,5 +1,81 @@
-<h1>Flood Early Warning Project</h1>
-<p>A prototype flood early warning system for Manchester, Jamaica, built around Hurricane Melissa (2025) data.</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content trial EWS</title>
+    <link rel="icon" type="image/png" href="/images/FloodMonitoring.jpg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<button id="hamburger" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
+<div id="map-container">
+    <div id="map"></div>
+</div>
+<div id="left-menu" class="menu-hidden">
+    <div class="menu-header">
+        <h3>Content Flood Monitor</h3>
+        <button onclick="toggleMenu()" class="close-menu">×</button>
+    </div>
+    <div class="menu-search">
+        <input id="map-search-input" type="text" placeholder="Search in Manchester...">
+        <button onclick="searchLocation()"><i class="fa-solid fa-search"></i></button>
+    </div>
+    <div class="menu-section">
+        <h4><i class="fa-solid fa-filter"></i> Filter by Status</h4>
+        <div class="status-filter-buttons">
+            <button class="filter-btn active" data-status="all">All</button>
+            <button class="filter-btn" data-status="green">Green</button>
+            <button class="filter-btn" data-status="yellow">Yellow</button>
+            <button class="filter-btn" data-status="orange">Orange</button>
+            <button class="filter-btn" data-status="red">Red</button>
+        </div>
+    </div>
+    <div class="menu-section">
+        <h4><i class="fa-solid fa-list"></i> Borehole Locations (1-4) <span onclick="toggleBoreholeList()">▼</span></h4>
+        <ul id="borehole-list"></ul>
+    </div>
+    <div class="menu-section">
+        <h4><i class="fa-solid fa-circle-info"></i> Flood Alert Legend</h4>
+        <div class="legend">
+            <div class="legend-item"><span class="legend-color green"></span> Green: Safe</div>
+            <div class="legend-item"><span class="legend-color yellow"></span> Yellow: Watch</div>
+            <div class="legend-item"><span class="legend-color orange"></span> Orange: Alert</div>
+            <div class="legend-item"><span class="legend-color red"></span> Red: Critical - Evacuate</div>
+        </div>
+        <div class="legend-conditions">
+            <h5>Status Conditions:</h5>
+            <div class="legend-item-small">• Water <0.5m & Rain <7.5mm/hr</div>
+            <div class="legend-item-small">• Water 0.5–1.0m or Rain 7.5–30mm/hr</div>
+            <div class="legend-item-small">• Water >1.0m or Rain >30mm/hr</div>
+        </div>
+    </div>
+    <div class="menu-section">
+        <h4><i class="fa-solid fa-map"></i> Basemap</h4>
+        <div class="basemap-controls">
+            <button onclick="setBasemap('outdoors')">Outdoors</button>
+            <button onclick="setBasemap('streets')">Streets</button>
+            <button onclick="setBasemap('satellite')">Satellite</button>
+        </div>
+    </div>
+</div>
+<div id="flood-sidebar" class="sidebar-hidden">
+    <div class="sidebar-header">
+        <h2 id="sidebar-title">Details</h2>
+        <button onclick="closeFloodSidebar()" class="close-btn">×</button>
+    </div>
+    <div id="sidebar-content"></div>
+</div>
+<div id="toast" class="toast" style="display: none;"></div>
+<script src="config.js"></script>
+<script src="data.js"></script>
+<script src="script.js"></script>
 <nav>
   <a href="simulation.html">View the forecast simulation</a>
 </nav>
+</body>
+</html>
+              
