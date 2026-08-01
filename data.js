@@ -1,0 +1,78 @@
+// data.js
+// 4 borehole locations from the WRA flood report along with AWS locations if i can get the coordinates
+// then i also want to add Shelter locations as well
+
+const BOREHOLES = [
+  {
+    id: 'content',
+    name: 'Content Borehole',
+    lat: 18.078212,
+    lng: -77.465578,
+    // Latest daily reading available as of the WRA report data (Feb 4 2026)
+    latestReading: {
+      date: '2026-02-04',
+      gwl_m: 300.62,
+      cond_mS: 0.436,
+      temp_C: 24.28
+    },
+    status: 'green', // placeholder — see note below on how status should be calibrated
+    notes: 'Site of the diver installation and the hand-read flood gauge (in feet). Closest borehole to the flooding described in the report.'
+  },
+  {
+    id: 'Hope',
+    name: 'Hope Village Borehole',
+    lat: 18.064874,
+    lng: -77.440064,
+    latestReading: {
+   // no readings available
+    },
+    status: 'green',
+    notes: 'Second closest borehole location to content in the karst aquifer system monitored for this study. However based on the mapping being tracked from geoglows this is the furthest from the channel assumed to be carrying the water through the aquifer'
+  },
+  {
+    id: 'melrose-hill',
+    name: 'Melrose Hill Borehole',
+    lat: 18.051740,
+    lng: -77.438422,
+    latestReading: {
+      date: '2026-02-04',
+      gwl_m: 195.90,
+      cond_mS: 0.5,
+      temp_C: 23.91
+    },
+    status: 'green',
+    notes: 'Third diver location in the karst aquifer system monitored for this study.'
+  },
+  {
+    id: 'russell-place',
+    name: 'Russell Place Borehole',
+    lat: 18.063755,
+    lng: -77.476586,
+    latestReading: {
+      date: '2026-02-02',
+      gwl_m: 306.46,
+      cond_mS: 0.484,
+      temp_C: 23.80
+    },
+    status: 'green',
+    notes: 'Diver installed slightly later than the other two sites (Nov 7, 2025 vs Nov 5). Last two days in the source data have no reading for this site, so the date above is Feb 2, not Feb 4.'
+  }
+];
+
+// Storm-total rainfall reference points (NOT a time series — see caveat
+// discussed with Claude). Coordinates for Ingleside, Knock Patrick, and Siri
+// were not given in the NHC source table; Ingleside's position below is
+// approximated from its proximity to Kirkvine.
+const RAINFALL_POINTS = [
+  { name: 'Devon Pri', lat: 17.89, lng: -77.50, total_in: 16.70 },
+  { name: 'Cross Keys', lat: 18.38, lng: -78.27, total_in: 16.66 },
+  { name: 'Marshall Pen Sutton', lat: 18.06, lng: -77.53, total_in: 18.94 },
+  { name: 'Ingleside', lat: 18.086, lng: -77.470, total_in: 25.47, note: 'Coordinates approximate' },
+  { name: 'Kendal', lat: 18.0872, lng: -77.4815, total_in: 7.07, note: 'Coordinates approximate' },
+  { name: 'May Pen', lat: 17.9645, lng: -77.2452, total_in: 11.10 }
+];
+
+// A rough IDW estimate at Content using Ingleside/Kendal/May Pen — flagged
+// as low-confidence given how much Ingleside and Kendal disagree despite
+// being only ~1km apart. See conversation notes for the full caveat.
+const CONTENT_RAINFALL_ESTIMATE_IN = 13.6;
