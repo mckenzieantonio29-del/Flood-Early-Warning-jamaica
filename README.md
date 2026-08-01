@@ -3,7 +3,7 @@ A simple web-based simulator for the framework for a potential Early warning sys
 
 This project is being developed in aid of the completion of our final project for the Bachelors of Engineering in Construction at the University of Technology, Jamaica on the topic *Developing a Framework for an Early Warning System for Limestone Aquifers Regions Prone to Groundwater Flooding: A Case Study of Content Manchester*. 
 
-The framework takes heavy inspiration from a project of a similar nature completed by user [8DUINOide](#), which is a similar flood monitoring system based on river flow, built for naga city in the Philippines. 
+The framework takes heavy inspiration from a project of a similar nature completed by user [8DUINOide](https://github.com/8DUINOide#), which is a similar flood monitoring system based on river flow, built for naga city in the Philippines. 
 
 ## Features
 
