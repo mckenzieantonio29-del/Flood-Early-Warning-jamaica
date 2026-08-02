@@ -33,22 +33,20 @@ function setBasemap(name) {
 // ---------- 2. Status colors ----------
 const statusColor = { green: '#3fae4a', yellow: '#e0b62b', orange: '#e0812b', red: '#d13b3b' };
 
-function makeDivIcon(color) {
-  return L.divIcon({
-    className: '',
-    html: `<div style="width:16px;height:16px;border-radius:50%;background:${color};border:2px solid #fff;box-shadow:0 0 3px rgba(0,0,0,0.5);"></div>`,
-    iconSize: [16, 16],
-    iconAnchor: [8, 8]
+const GEOAPIFY_API_KEY = '2c16f063babc407e82e2b2a3944cbf0d'; // https://myprojects.geoapify.com
+
+function makeGeoapifyIcon(color, iconName = 'map-pin') {
+  const url = `https://api.geoapify.com/v2/icon/?type=awesome&color=${encodeURIComponent(color)}&size=48&icon=${iconName}&iconType=lucide&contentSize=20&noWhiteCircle&scaleFactor=2&apiKey=${GEOAPIFY_API_KEY}`;
+  return L.icon({ 
+    iconUrl: url,
+    iconSize: [25, 40],
+    iconAnchor: [18, 48],   // bottom tip of the pin sits on the coordinate
+    popupAnchor: [0, -55]
   });
 }
 
 function rainIcon() {
-  return L.divIcon({
-    className: '',
-    html: `<div style="width:14px;height:14px;border-radius:3px;background:#1a6ea3;border:2px solid #fff;box-shadow:0 0 3px rgba(0,0,0,0.5);"></div>`,
-    iconSize: [14, 14],
-    iconAnchor: [7, 7]
-  });
+  return makeGeoapifyIcon('#09486f', 'umbrella');
 }
 
 // ---------- 3. Borehole markers ----------
