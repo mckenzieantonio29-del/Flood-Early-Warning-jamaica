@@ -59,10 +59,7 @@ const BOREHOLES = [
   }
 ];
 
-// Storm-total rainfall reference points (NOT a time series — see caveat
-// discussed with Claude). Coordinates for Ingleside, Knock Patrick, and Siri
-// were not given in the NHC source table; Ingleside's position below is
-// approximated from its proximity to Kirkvine.
+// Format for these needs to change
 const RAINFALL_POINTS = [
   { name: 'Devon Pri', lat: 17.89, lng: -77.50, total_in: 16.70 },
   { name: 'Cross Keys', lat: 18.38, lng: -78.27, total_in: 16.66 },
@@ -72,7 +69,5 @@ const RAINFALL_POINTS = [
   { name: 'May Pen', lat: 17.9645, lng: -77.2452, total_in: 11.10 }
 ];
 
-// A rough IDW estimate at Content using Ingleside/Kendal/May Pen — flagged
-// as low-confidence given how much Ingleside and Kendal disagree despite
-// being only ~1km apart. See conversation notes for the full caveat.
+// Remove
 const CONTENT_RAINFALL_ESTIMATE_IN = 13.6;
