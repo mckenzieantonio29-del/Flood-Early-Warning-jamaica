@@ -61,11 +61,11 @@ const BOREHOLES = [
 
 // Format for these needs to change
 const RAINFALL_POINTS = [
-  { name: 'Devon Pri', lat: 17.89, lng: -77.50, total_in: 16.70 },
-  { name: 'Cross Keys', lat: 18.38, lng: -78.27, total_in: 16.66 },
-  { name: 'Marshall Pen Sutton', lat: 18.06, lng: -77.53, total_in: 18.94 },
-  { name: 'Ingleside', lat: 18.086, lng: -77.470, total_in: 25.47, note: 'Coordinates approximate' },
-  { name: 'Kendal', lat: 18.0872, lng: -77.4815, total_in: 7.07, note: 'Coordinates approximate' },
+ { name: 'Devon Pri', lat: 18.166768, lng: -77.532460, total_in: 16.70 },
+  { name: 'Cross Keys', lat: 17.898289, lng: -77.502724, total_in: 16.66 },
+  { name: 'Marshall Pen Sutton', lat: 18.050533, lng: -77.531551, total_in: 18.94 },
+  { name: 'Ingleside', lat: 18.056205, lng: -77.500044, total_in: 25.47, note: 'Coordinates approximate' },
+  { name: 'Kendal', lat: 18.075454, lng: -77.494118, total_in: 7.07, note: 'Coordinates approximate' },
   { name: 'May Pen', lat: 17.9645, lng: -77.2452, total_in: 11.10 }
 ];
 
