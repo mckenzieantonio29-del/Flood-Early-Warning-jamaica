@@ -5,12 +5,8 @@ const CONTENT_COORDS = [18.080, -77.4775];
 
 const map = L.map('map').setView(CONTENT_COORDS, 13);
 
-// Basemaps — all free, no API key needed.
+// Basemaps
 // "street" now uses MapLibre GL (via the leaflet-maplibre-gl bridge plugin)
-// pointed at OpenFreeMap's free vector style, for the cleaner look.
-// MapLibre doesn't have a free built-in "terrain" or "satellite" style, so
-// those two stay as plain raster tile layers — Leaflet treats all three the
-// same way (addTo/removeLayer), so swapping between them still works fine.
 const basemaps = {
   street: L.maplibreGL({
     style: 'https://tiles.openfreemap.org/styles/liberty'
@@ -193,9 +189,6 @@ function closeFloodSidebar() {
 }
 
 // ---------- 6. Open-Meteo: live rainfall check per borehole ----------
-// No API key needed. Pulls historical daily rainfall for the borehole's own
-// coordinates across the Melissa event window, as a cross-check against the
-// interpolated Manchester estimate (Content specifically).
 async function fetchOpenMeteoRainfall(b) {
   const block = document.getElementById(`meteo-block-${b.id}`);
   if (!block) return;
