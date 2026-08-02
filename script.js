@@ -53,7 +53,7 @@ function rainIcon() {
 const boreholeMarkers = {}; // id -> {marker, data}
 
 BOREHOLES.forEach(b => {
-  const marker = L.marker([b.lat, b.lng], { icon: makeDivIcon(statusColor[b.status]) }).addTo(map);
+  const marker = L.marker([b.lat, b.lng], { icon: makeGeoapifyIcon(statusColor[b.status]) }).addTo(map);
   marker.on('click', () => openBoreholeDetails(b));
   boreholeMarkers[b.id] = { marker, data: b };
 
