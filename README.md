@@ -9,7 +9,7 @@ The framework takes heavy inspiration from a project of a similar nature complet
 
 1) Interactive map with clickable areas and markers
 
-2) Markers for all the Boreholes located around the Content Aquifer zone taken from the WRA Report 2026 report and our interviews with the WRA team that would have visited the site prior to the flooding from Hurricane Melissa (2025)
+2) Markers for all the Boreholes located around the Content Aquifer zone taken from the WRA Melissa flood report 2026 and our interviews with the WRA team that would have visited the site prior to the flooding from Hurricane Melissa (2025)
 
 3) Markers for Automated Weather Systems (AWS) located around the area 
 
