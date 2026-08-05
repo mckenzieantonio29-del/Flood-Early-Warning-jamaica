@@ -66,6 +66,18 @@
         <ul id="rainfall-list"></ul>
     </div>
 
+      <div class="menu-section">
+        <h4>
+            <i class="fa-solid fa-house"></i> Shelter Locations 
+            <span class="toggle-caret" onclick="toggleList('shelter-list')">&#9660;</span>
+            <label class="switch">
+                <input type="checkbox" id="toggle-shelters" checked onchange="toggleShelterLayer(this.checked)">
+                <span class="switch-slider"></span>
+            </label>
+        </h4>
+        <ul id="shelter-list"></ul>
+    </div>
+
     <div class="menu-section">
         <h4><i class="fa-solid fa-circle-info"></i> Flood Alert Legend</h4>
         <div class="legend">
