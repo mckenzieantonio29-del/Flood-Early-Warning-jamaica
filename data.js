@@ -1,6 +1,5 @@
 // data.js
-// 4 borehole locations from the WRA flood report along with AWS locations if i can get the coordinates
-// then i also want to add Shelter locations as well
+// 4 borehole locations from the WRA flood report along with AWS locations and Shelter locations provided from the ODPEM site
 
 const BOREHOLES = [
   {
@@ -15,7 +14,7 @@ const BOREHOLES = [
       cond_mS: 0.436,
       temp_C: 24.28
     },
-    status: 'green', // placeholder — see note below on how status should be calibrated
+    status: 'green', 
     notes: 'Site of the diver installation and the hand-read flood gauge (in feet). Closest borehole to the flooding described in the report.'
   },
   {
@@ -59,15 +58,24 @@ const BOREHOLES = [
   }
 ];
 
-// Format for these needs to change
+//Total inches here are from the WRA report but Iopted to not show them on the site in favor of the live readings instead
 const RAINFALL_POINTS = [
  { name: 'Devon Pri', lat: 18.166768, lng: -77.532460, total_in: 16.70 },
   { name: 'Cross Keys', lat: 17.898289, lng: -77.502724, total_in: 16.66 },
   { name: 'Marshall Pen Sutton', lat: 18.050533, lng: -77.531551, total_in: 18.94 },
-  { name: 'Ingleside', lat: 18.056205, lng: -77.500044, total_in: 25.47, note: 'Coordinates approximate' },
-  { name: 'Kendal', lat: 18.075454, lng: -77.494118, total_in: 7.07, note: 'Coordinates approximate' },
+  { name: 'Ingleside', lat: 18.056205, lng: -77.500044, total_in: 25.47 },
+  { name: 'Kendal', lat: 18.075454, lng: -77.494118, total_in: 7.07 },
   { name: 'May Pen', lat: 17.9645, lng: -77.2452, total_in: 11.10 }
 ];
 
-// Remove
-const CONTENT_RAINFALL_ESTIMATE_IN = 13.6;
+const SHELTERS = [
+  {id: 'bellefield_hs', name: 'Bellefield High School', lat: 18.079995, lng: -77.452973},
+  {id: 'mile-gully_cs', name: 'Mile Gully Community Centre', lat: 18.135535, lng: -77.543937},
+  {id: 'kendal_infscl', name: 'Kendal Primary & Infant School', lat: 18.073821, lng: -77.493174},
+  {id: 'grace_apc', name: 'Grace Apostolic Church', lat: 18.067110, lng: -77.516125},
+  {id: 'porus_hs', name: 'Porus High School', lat: 18.037032, lng: -77.409089},
+  {id: 'porus_inf', name: 'Porus Infant School', lat: 18.035296, lng: -77.404724},
+  {id: 'mandeville_p', name: 'Mandeville Primary & Junior High School', lat: 18.040356, lng: -77.509718},
+  {id: 'manchester_hs', name: 'Manchester High School', lat: 18.036143, lng: -77.510448},
+  {id: 'mayday_hs', name: 'May Day High School', lat: 18.008738, lng: -77.489003}
+]
