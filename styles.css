@@ -153,8 +153,8 @@ html, body {
     background: #d13b3b;
 }
 
-#borehole-list, #rainfall-list { list-style: none; margin: 0; padding: 0; font-size: 13px; }
-#borehole-list li, #rainfall-list li {
+#borehole-list, #rainfall-list, #shelter-list { list-style: none; margin: 0; padding: 0; font-size: 13px; }
+#borehole-list li, #rainfall-list li, #shelter-list li {
   padding: 8px 6px;
   border-radius: 6px;
   cursor: pointer;
@@ -162,7 +162,7 @@ html, body {
   align-items: center;
   gap: 8px;
 }
-#borehole-list li:hover, #rainfall-list li:hover { background: #f2f5f7; }
+#borehole-list li:hover, #rainfall-list li:hover, #shelter-list li:hover { background: #f2f5f7; }
 
 .status-dot {
   width: 10px; height: 10px;
@@ -183,6 +183,45 @@ html, body {
 .legend-color.red { background: #d13b3b; }
 .legend-conditions h5 { margin: 0 0 4px; font-size: 12px; color: #55606a; }
 .legend-item-small { font-size: 11px; color: #6a747c; margin-bottom: 2px; }
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 20px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.switch-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #ccd3d8;
+  border-radius: 20px;
+  transition: 0.2s;
+}
+.switch-slider::before {
+  content: "";
+  position: absolute;
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+  background-color: #fff;
+  border-radius: 50%;
+  transition: 0.2s;
+}
+.switch input:checked + .switch-slider {
+  background-color: #0f3d5c;
+}
+.switch input:checked + .switch-slider::before {
+  transform: translateX(16px);
+}
 
 .basemap-controls { display: flex; gap: 6px; }
 .basemap-controls button {
@@ -257,6 +296,40 @@ html, body {
 
 .detail-status-row { margin-bottom: 10px; }
 
+.status-badge-large {
+  display: inline-block;
+  padding: 8px 20px;
+  border-radius: 22px;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #fff;
+}
+.status-badge-large.status-green { background: #3fae4a; }
+.status-badge-large.status-yellow { background: #e0b62b; }
+.status-badge-large.status-orange { background: #e0812b; }
+.status-badge-large.status-red { background: #d13b3b; }
+
+.recommended-action {
+  background: #fff;
+  border-left: 4px solid #ccd3d8;
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin: 12px 0 16px;
+}
+.recommended-action h4 {
+  margin: 0 0 6px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #55606a;
+}
+.recommended-action p { margin: 0; font-size: 13px; line-height: 1.45; }
+.recommended-action.action-green { border-left-color: #3fae4a; }
+.recommended-action.action-yellow { border-left-color: #e0b62b; }
+.recommended-action.action-orange { border-left-color: #e0812b; }
+.recommended-action.action-red { border-left-color: #d13b3b; }
+
 .detail-notes { color: #55606a; font-size: 12px; margin: 0 0 16px; }
 
 .detail-block-header {
@@ -325,11 +398,30 @@ html, body {
 .cancel-btn { border: 1px solid #ccd3d8; background: #fff; color: #55606a; }
 .cancel-btn:hover { background: #f2f5f7; }
 
-.meteo-total { font-size: 13px; margin: 6px 0; }
-.meteo-table { width: 100%; font-size: 11px; border-collapse: collapse; }
-.meteo-table th { text-align: left; color: #8a939b; font-weight: 500; padding-bottom: 4px; }
-.meteo-table td { padding: 2px 0; }
-.meteo-caveat { color: #8a939b; font-size: 11px; margin-top: 8px; }
+.weather-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 6px;
+}
+.weather-stat {
+  background: #fff;
+  border-radius: 8px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.weather-stat i { color: #1a6ea3; font-size: 14px; margin-bottom: 2px; }
+.weather-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: #8a939b;
+}
+.weather-value { font-size: 15px; font-weight: 600; color: #23303a; }
+
+.meteo-caveat { color: #8a939b; font-size: 11px; margin-top: 10px; }
 
 .toast {
   position: fixed;
