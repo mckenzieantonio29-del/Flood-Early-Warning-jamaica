@@ -58,7 +58,7 @@ const BOREHOLES = [
   }
 ];
 
-//Total inches here are from the WRA report but Iopted to not show them on the site in favor of the live readings instead
+//Total inches here are from the WRA report but I opted to not show them on the site in favor of the live readings instead
 const RAINFALL_POINTS = [
  { name: 'Devon Pri', lat: 18.166768, lng: -77.532460, total_in: 16.70 },
   { name: 'Cross Keys', lat: 17.898289, lng: -77.502724, total_in: 16.66 },
