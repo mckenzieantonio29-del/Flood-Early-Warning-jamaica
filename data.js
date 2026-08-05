@@ -16,7 +16,7 @@ const BOREHOLES = [
       temp_C: 24.28
     },
     status: 'green', 
-    notes: 'Site of the diver installation and the hand-read flood gauge (in feet). Closest borehole to the flooding described in the report.'
+    notes: 'Site of the diver installation and the hand-read flood gauge (in meters). Closest borehole to the flooding.'
   },
   {
     id: 'Hope',
