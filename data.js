@@ -30,6 +30,7 @@ const BOREHOLES = [
     },
     status: 'green',
     notes: 'Second closest borehole location to content in the karst aquifer system monitored for this study. However readings for this site have not been logged since june 2023'
+  },
   {
     id: 'melrose-hill',
     name: 'Melrose Hill Borehole',
