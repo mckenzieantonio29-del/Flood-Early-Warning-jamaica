@@ -5,12 +5,13 @@ const BOREHOLES = [
   {
     id: 'content',
     name: 'Content Borehole',
+    type: 'borehole',
     lat: 18.078212,
     lng: -77.465578,
-    // Latest daily reading available as of the WRA report data (Feb 4 2026)
+    // Latest daily reading available as of the WRA Website (May 22, 2026)
     latestReading: {
-      date: '2026-02-04',
-      gwl_m: 300.62,
+      date: '2026-05-22',
+      gwl_m: 83.095,
       cond_mS: 0.436,
       temp_C: 24.28
     },
@@ -20,22 +21,24 @@ const BOREHOLES = [
   {
     id: 'Hope',
     name: 'Hope Village Borehole',
+    type: 'borehole',
     lat: 18.064874,
     lng: -77.440064,
     latestReading: {
-   // no readings available
+      date: '2023-06-20',
+      gwl_m: 17.617
     },
     status: 'green',
-    notes: 'Second closest borehole location to content in the karst aquifer system monitored for this study. However based on the mapping being tracked from geoglows this is the furthest from the channel assumed to be carrying the water through the aquifer'
-  },
+    notes: 'Second closest borehole location to content in the karst aquifer system monitored for this study. However readings for this site have not been logged since june 2023'
   {
     id: 'melrose-hill',
     name: 'Melrose Hill Borehole',
+    type: 'borehole',
     lat: 18.051740,
     lng: -77.438422,
     latestReading: {
-      date: '2026-02-04',
-      gwl_m: 195.90,
+      date: '2025-11-05',
+      gwl_m: 52.66,
       cond_mS: 0.5,
       temp_C: 23.91
     },
@@ -45,11 +48,12 @@ const BOREHOLES = [
   {
     id: 'russell-place',
     name: 'Russell Place Borehole',
+    type: 'borehole',
     lat: 18.063755,
     lng: -77.476586,
     latestReading: {
-      date: '2026-02-02',
-      gwl_m: 306.46,
+      date: '2026-05-22',
+      gwl_m: 48.707,
       cond_mS: 0.484,
       temp_C: 23.80
     },
