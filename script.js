@@ -86,16 +86,32 @@ RAINFALL_POINTS.forEach(r => {
 
 //------------ 5. Shelter Markers ---------
 const shelterLayer = L.layerGroup();
-SHELTERS.forEach(s=> {
+SHELTERS.forEach(s => {
+  const active = isShelterActiveToday(s);
   const marker = L.marker([s.lat, s.lng], { icon: shelterIcon() });
   marker.addTo(shelterLayer);
-  marker.on('click', () => openShelterDetails(s));
+  marker.bindPopup(`
+  <div class="shelter-popup-header">
+    <i class="fa-solid fa-house"></i>
+    <h4>${s.name}</h4>
+  </div>
+  <div class="shelter-popup-body">
+    <span class="shelter-popup-status status-${active ? 'active' : 'closed'}">${active ? 'Active' : 'Closed'}</span>
+  </div>
+`);
 
   const li = document.createElement('li');
   li.innerHTML = `<i class="fa-solid fa-house" style="color:#0f3d5c"></i> ${s.name}`;
-  li.onclick = () => { map.setView([s.lat, s.lng], 15); openShelterDetails(s); };
+  li.onclick = () => { map.setView([s.lat, s.lng], 15); marker.openPopup(); };
   document.getElementById('shelter-list').appendChild(li);
 });
+ const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+ function isShelterActiveToday(s) {
+  if (!s.activeDays) return true; // no schedule set = treat as always active
+  const today = new Date().getDay();
+  return s.activeDays.includes(today);
+}
 shelterLayer.addTo(map);
 
 // ---------- 6. Sidebar ----------
@@ -151,7 +167,7 @@ function openBoreholeDetails(b) {
 }
 
 
-// ---------- 5b. Edit mode (placeholder for real diver integration) ----------
+// ---------- 6b. Edit mode (placeholder for real diver integration) ----------
 function enterEditMode(id) {
   const b = BOREHOLES.find(x => x.id === id);
   if (!b) return;
@@ -210,12 +226,19 @@ function saveEdit(id) {
 function openRainfallDetails(r) {
   document.getElementById('sidebar-title').textContent = r.name;
   document.getElementById('sidebar-content').innerHTML = `
-    <dl>
-      <dt>Storm-total rainfall (Hurricane Melissa)</dt><dd>${r.total_in} in</dd>
-      <dt>Type</dt><dd>Single cumulative total — not a time series</dd>
-      ${r.note ? `<dt>Note</dt><dd>${r.note}</dd>` : ''}
-    </dl>
-    <p style="color:#6a747c;font-size:12px;">Source: NHC Tropical Cyclone Report, Table 3.</p>
+    <div class="detail-block-header">
+     <h4>Weather Sensors</h4>
+    </div>
+    <div id="meteo-block-${r.id}"><em>Loading live weather data from Open-Meteo...</em></div>
+  `;
+  document.getElementById('flood-sidebar').classList.remove('sidebar-hidden');
+  fetchOpenMeteoWeather(r);
+}
+
+function openShelterDetails(s) {
+  document.getElementById('sidebar-title').textContent = s.name;
+  document.getElementById('sidebar-content').innerHTML = `
+    <p class="detail-notes">Shelter location.</p>
   `;
   document.getElementById('flood-sidebar').classList.remove('sidebar-hidden');
 }

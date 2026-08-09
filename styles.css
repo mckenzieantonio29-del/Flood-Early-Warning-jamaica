@@ -434,3 +434,54 @@ html, body {
   font-size: 13px;
   z-index: 2000;
 }
+//--------status pill-------------
+.leaflet-popup-content-wrapper {
+  padding: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+}
+.leaflet-popup-content {
+  margin: 0;
+  width: 220px !important;
+}
+
+.shelter-popup-header {
+  background: #003A6C;
+  color: #fff;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.shelter-popup-header i { font-size: 13px; }
+.shelter-popup-header h4 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.shelter-popup-body { padding: 10px 14px 14px; }
+
+.shelter-popup-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #fff;
+}
+.shelter-popup-status::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #fff;
+}
+.shelter-popup-status.status-active { background: #3fae4a; }
+.shelter-popup-status.status-closed { background: #d13b3b; }
