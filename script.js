@@ -86,16 +86,32 @@ RAINFALL_POINTS.forEach(r => {
 
 //------------ 5. Shelter Markers ---------
 const shelterLayer = L.layerGroup();
-SHELTERS.forEach(s=> {
+SHELTERS.forEach(s => {
+  const active = isShelterActiveToday(s);
   const marker = L.marker([s.lat, s.lng], { icon: shelterIcon() });
   marker.addTo(shelterLayer);
-  marker.on('click', () => openShelterDetails(s));
+  marker.bindPopup(`
+  <div class="shelter-popup-header">
+    <i class="fa-solid fa-house"></i>
+    <h4>${s.name}</h4>
+  </div>
+  <div class="shelter-popup-body">
+    <span class="shelter-popup-status status-${active ? 'active' : 'closed'}">${active ? 'Active' : 'Closed'}</span>
+  </div>
+`);
 
   const li = document.createElement('li');
   li.innerHTML = `<i class="fa-solid fa-house" style="color:#0f3d5c"></i> ${s.name}`;
-  li.onclick = () => { map.setView([s.lat, s.lng], 15); openShelterDetails(s); };
+  li.onclick = () => { map.setView([s.lat, s.lng], 15); marker.openPopup(); };
   document.getElementById('shelter-list').appendChild(li);
 });
+ const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+ function isShelterActiveToday(s) {
+  if (!s.activeDays) return true; // no schedule set = treat as always active
+  const today = new Date().getDay();
+  return s.activeDays.includes(today);
+}
 shelterLayer.addTo(map);
 
 // ---------- 6. Sidebar ----------
