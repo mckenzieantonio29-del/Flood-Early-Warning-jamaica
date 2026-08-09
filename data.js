@@ -84,4 +84,4 @@ const SHELTERS = [
   {id: 'manchester_hs', name: 'Manchester High School', lat: 18.036143, lng: -77.510448, activeDays: [1, 2, 3, 4, 5]},
   {id: 'mayday_hs', name: 'May Day High School', lat: 18.008738, lng: -77.489003, activeDays: [1, 2, 3, 4, 5]}
 ]
-]
+
