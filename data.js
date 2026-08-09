@@ -74,13 +74,14 @@ const RAINFALL_POINTS = [
 ];
 
 const SHELTERS = [
-  {id: 'bellefield_hs', name: 'Bellefield High School', lat: 18.079995, lng: -77.452973},
-  {id: 'mile-gully_cs', name: 'Mile Gully Community Centre', lat: 18.135535, lng: -77.543937},
-  {id: 'kendal_infscl', name: 'Kendal Primary & Infant School', lat: 18.073821, lng: -77.493174},
-  {id: 'grace_apc', name: 'Grace Apostolic Church', lat: 18.067110, lng: -77.516125},
-  {id: 'porus_hs', name: 'Porus High School', lat: 18.037032, lng: -77.409089},
-  {id: 'porus_inf', name: 'Porus Infant School', lat: 18.035296, lng: -77.404724},
-  {id: 'mandeville_p', name: 'Mandeville Primary & Junior High School', lat: 18.040356, lng: -77.509718},
-  {id: 'manchester_hs', name: 'Manchester High School', lat: 18.036143, lng: -77.510448},
-  {id: 'mayday_hs', name: 'May Day High School', lat: 18.008738, lng: -77.489003}
+  {id: 'bellefield_hs', name: 'Bellefield High School', lat: 18.079995, lng: -77.452973, activeDays: [1, 2, 3, 4, 5]},
+  {id: 'mile-gully_cs', name: 'Mile Gully Community Centre', lat: 18.135535, lng: -77.543937, activeDays: [1, 2, 3, 4, 5, 6, 7]},
+  {id: 'kendal_infscl', name: 'Kendal Primary & Infant School', lat: 18.073821, lng: -77.493174, activeDays: [1, 2, 3, 4, 5]},
+  {id: 'grace_apc', name: 'Grace Apostolic Church', lat: 18.067110, lng: -77.516125, activeDays: [1, 2, 3, 4, 5, 6]},
+  {id: 'porus_hs', name: 'Porus High School', lat: 18.037032, lng: -77.409089, activeDays: [1, 2, 3, 4, 5]},
+  {id: 'porus_inf', name: 'Porus Infant School', lat: 18.035296, lng: -77.404724, activeDays: [1, 2, 3, 4, 5]},
+  {id: 'mandeville_p', name: 'Mandeville Primary & Junior High School', lat: 18.040356, lng: -77.509718, activeDays: [1, 2, 3, 4, 5]},
+  {id: 'manchester_hs', name: 'Manchester High School', lat: 18.036143, lng: -77.510448, activeDays: [1, 2, 3, 4, 5]},
+  {id: 'mayday_hs', name: 'May Day High School', lat: 18.008738, lng: -77.489003, activeDays: [1, 2, 3, 4, 5]}
+]
 ]
