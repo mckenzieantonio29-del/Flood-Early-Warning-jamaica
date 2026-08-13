@@ -16,7 +16,7 @@ const BOREHOLES = [
       temp_C: 24.28
     },
     status: 'green', 
-    notes: 'Site of the diver installation and the hand-read flood gauge (in meters). Closest borehole to the flooding.'
+  
   },
   {
     id: 'Hope',
@@ -29,7 +29,7 @@ const BOREHOLES = [
       gwl_m: 17.617
     },
     status: 'green',
-    notes: 'Second closest borehole location to content in the karst aquifer system monitored for this study. However readings for this site have not been logged since june 2023'
+    notes: 'Diver readings for this site have not been updated since 2022'
   },
   {
     id: 'melrose-hill',
@@ -44,7 +44,7 @@ const BOREHOLES = [
       temp_C: 23.91
     },
     status: 'green',
-    notes: 'Third diver location in the karst aquifer system monitored for this study.'
+    
   },
   {
     id: 'russell-place',
@@ -59,7 +59,7 @@ const BOREHOLES = [
       temp_C: 23.80
     },
     status: 'green',
-    notes: 'Diver installed slightly later than the other two sites (Nov 7, 2025 vs Nov 5). Last two days in the source data have no reading for this site, so the date above is Feb 2, not Feb 4.'
+    
   }
 ];
 
